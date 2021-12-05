@@ -126,7 +126,6 @@ interface ItemTab {
   uuid: string;
   tabType: ItemTabType;
   title: string;
-  isLimited: boolean;
   items: Array<Maneuva> | Array<Resource>;
 }
 
