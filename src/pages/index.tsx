@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import fetch from 'node-fetch';
-import Sheet from '../type/sheet';
+import { Sheet, Place } from '../models';
+import { v4 as uuidv4 } from 'uuid';
 
 const Home: NextPage<Sheet> = (sheet) => {
   return (
@@ -46,8 +47,58 @@ const Home: NextPage<Sheet> = (sheet) => {
 
 Home.getInitialProps = async (ctx) => {
   const hash = window.location.hash;
+  if (!hash) {
+    return {
+      uuid: uuidv4(),
+      isPrivate: false,
+      tags: [],
+      favors: [],
+      usedFavors: [],
+      tabs: [],
+      profile: {
+        name: '',
+        race: '',
+        age: '',
+        place: Place.Purgatory,
+        height: '',
+        weight: '',
+        implication: '',
+        hair: '',
+        eye: '',
+        skin: '',
+        memo: '',
+        memories: [],
+        regrets: [
+          {
+            uuid: uuidv4(),
+            target: 'たからもの',
+            name: '依存',
+            currentVal: 3,
+            maxVal: 4,
+            negative: '最大行動値減少(-2)',
+            description: 'パーツとして所持。破壊で狂気点+1',
+          },
+        ],
+        karmas: [
+          {
+            uuid: uuidv4(),
+            achieved: false,
+            name: '記憶のカケラを獲得する',
+            description: '',
+          },
+        ],
+      },
+      classes: {
+        positions: [],
+        subPositions: [],
+        highTechs: [],
+        classes: [],
+        points: [],
+      },
+    };
+  }
   const uuid = hash.split('/')[1];
-  const res = await fetch(`${process.env.DETAIL_URL}/${uuid}`);
+  const res = await fetch(`${process.env.ENDPOINT}/${uuid}`);
   return (await res.json()) as Sheet;
 };
 

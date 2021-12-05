@@ -28,9 +28,9 @@ interface Profile {
 }
 
 enum Place {
-  Purgatory,
-  Garden,
-  Paradise,
+  Purgatory = 'Purgatory',
+  Garden = 'Garden',
+  Paradise = 'Paradise',
 }
 
 interface Memory {
@@ -95,13 +95,14 @@ interface HighTechDetail {
 }
 
 enum ClassCategory {
-  MainClass,
-  SubClass,
-  SecondClass,
-  ThirdClass,
-  ThirdPointFiveClass,
-  HighSociety,
-  OtherClass,
+  MainClass = 'MainClass',
+  SubClass = 'SubClass',
+  SecondClass = 'SecondClass',
+  ThirdClass = 'ThirdClass',
+  ThirdPointFiveClass = 'ThirdPointFiveClass',
+  HighSociety = 'HighSociety',
+  HighSocietyPlus = 'HighSocietyPlus',
+  OtherClass = 'OtherClass',
 }
 
 interface ClassDetail {
@@ -123,44 +124,68 @@ interface Point {
 
 interface ItemTab {
   uuid: string;
-  type: ItemTabType;
+  tabType: ItemTabType;
   title: string;
   isLimited: boolean;
-  maneuvas: Array<Maneuva>;
-  resources: Array<Resource>;
+  items: Array<Maneuva> | Array<Resource>;
 }
 
 enum ItemTabType {
-  ManeuvaTab,
-  ResourceTab,
+  ManeuvaTab = 'ManeuvaTab',
+  ResourceTab = 'ResourceTab',
 }
 
 enum ManeuvaType {
-  Skill,
-  Part,
-  Item,
-  Effect,
-  Archive,
-  Tag,
+  Skill = 'Skill',
+  Part = 'Part',
+  Item = 'Item',
+  Effect = 'Effect',
+  Archive = 'Archive',
+  Tag = 'Tag',
 }
 
 interface Maneuva {
   uuid: string;
   used: boolean;
   lost: boolean;
-  act: number;
-  malice: number;
-  favor: number;
+  act?: number;
+  malice?: number;
+  favor?: number;
   maneuvaType: ManeuvaType;
   category: string;
   name: string;
-  timing: string;
+  timing: Timing;
   cost: string;
   range: string;
   description: string;
   from: string;
-  region: string;
+  region: Region;
   position: number;
+}
+
+enum Region {
+  NoRegion = 'NoRegion',
+  Head = 'Head',
+  Arm = 'Arm',
+  Body = 'Body',
+  Leg = 'Leg',
+  Girl = 'Girl',
+  OtherRegion = 'OtherRegion',
+}
+
+enum Timing {
+  AutoAlways = 'AutoAlways',
+  AutoNeedsDeclearation = 'AutoNeedsDeclearation',
+  AutoOthers = 'AutoOthers',
+  Action = 'Action',
+  Judge = 'Judge',
+  Damage = 'Damage',
+  Rapid = 'Rapid',
+  FastRapid = 'FastRapid',
+  BeforeBattle = 'BeforeBattle',
+  BattleStart = 'BattleStart',
+  TurnStart = 'TurnStart',
+  CountStart = 'CountStart',
 }
 
 interface Resource {
@@ -171,4 +196,5 @@ interface Resource {
   position: number;
 }
 
-export default Sheet;
+export type { Sheet };
+export { Place };
