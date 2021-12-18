@@ -43,6 +43,16 @@ function ProfileTab(props: ProfileTabProps) {
         }}
       />
       <div className='bg-gray-400 p-1 rounded m-1'>メモ</div>
+      <textarea
+        className='w-11/12 border border-black p-1 text-xs'
+        rows={Math.max(props.sheet.profile.memo.split('\n').length + 1, 5)}
+        defaultValue={props.sheet.profile.memo}
+        onInput={(e) => {
+          const newSheet = { ...props.sheet };
+          newSheet.profile.memo = e.currentTarget.value;
+          props.updateSheet(newSheet);
+        }}
+      ></textarea>
     </div>
   );
 }
