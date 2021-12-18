@@ -195,5 +195,5 @@ interface Resource {
   position: number;
 }
 
-export type { Sheet };
+export type { Sheet, Profile, Memory };
 export { Place };

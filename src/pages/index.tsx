@@ -1,5 +1,7 @@
 import { NextPage } from 'next';
-import { Sheet, Place } from '../models';
+import { Sheet, Profile, Place } from '../models';
+import ProfileTab from './profile';
+import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
@@ -25,7 +27,6 @@ const Home: NextPage = () => {
   const [currentTab, setCurrentTab] = useState<CurrentTab>({
     tabType: TabType.Profile,
   });
-  const [content, setContent] = useState('');
   const [sheet, setSheet] = useState({
     uuid: uuidv4(),
     isPrivate: false,
@@ -74,6 +75,12 @@ const Home: NextPage = () => {
       points: [],
     },
   } as Sheet);
+  const updateSheet = (sheet: Sheet) => {
+    setSheet(sheet);
+  };
+  const [content, setContent] = useState(
+    <ProfileTab sheet={sheet} updateSheet={updateSheet} />,
+  );
   useEffect(() => {
     if (process.env.IS_LOCAL) {
       const dummyData = {
@@ -81,10 +88,10 @@ const Home: NextPage = () => {
         isPrivate: false,
         tags: [],
         profile: {
-          name: '',
-          race: '',
+          name: 'youku_s',
+          race: 'player',
           age: '',
-          place: 'Purgatory',
+          place: 'Garden',
           height: '',
           weight: '',
           implication: '',
@@ -214,9 +221,16 @@ const Home: NextPage = () => {
       fetchData();
     }
   }, []);
+  useEffect(() => {
+    if (currentTab.tabType == TabType.Profile) {
+      setContent(<ProfileTab sheet={sheet} updateSheet={updateSheet} />);
+    } else {
+      setContent(<Tab sheet={sheet} />);
+    }
+  }, [currentTab, sheet]);
   return (
-    <div className='flex m-10'>
-      <div className='flex-initial inline-block border-solid border border-black rounded p-3 m-1'>
+    <div className='flex items-start m-10'>
+      <div className='flex-none text-xs w-64 inline-block border-solid border border-black rounded p-3 m-1'>
         <div className='bg-gray-400 p-1 rounded m-1'>パスワード</div>
         <div className='m-1'>
           <input
@@ -226,10 +240,6 @@ const Home: NextPage = () => {
         </div>
         <div className='m-1'>
           <button className='shadow bg-gray-300 rounded p-1'>保存</button>
-        </div>
-        <div className='bg-gray-400 p-1 rounded m-1'>出力</div>
-        <div className='m-1'>
-          <button className='shadow bg-gray-300 rounded p-1'>Text出力</button>
         </div>
         <div className='bg-gray-400 p-1 rounded m-1'>タグ</div>
         <div className='m-1'>タグは以下に入力し、Enterで追加できます。</div>
@@ -241,13 +251,18 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className='flex-auto inline-block m-1'>
-        <ul className='align-top'>
+        <ul className='align-top m-0'>
           <li
-            className={`inline-block rounded border-solid border border-black border-b-0 rounded-b-none p-1 ${
+            className={`inline-block rounded border border-black rounded-b-none p-1 ${
               isTabSelected(currentTab, { tabType: TabType.Profile })
-                ? ''
+                ? 'bg-white -mb-px'
                 : 'bg-gray-300'
             }`}
+            style={
+              isTabSelected(currentTab, { tabType: TabType.Profile })
+                ? { borderBottom: 'none' }
+                : {}
+            }
             onClick={() => setCurrentTab({ tabType: TabType.Profile })}
           >
             パーソナル
@@ -255,14 +270,22 @@ const Home: NextPage = () => {
           {sheet.tabs.map((tab, index) => {
             return (
               <li
-                className={`inline-block rounded border-solid border border-black border-b-0 rounded-b-none p-1 ${
+                className={`inline-block rounded border border-black rounded-b-none p-1 ${
                   isTabSelected(currentTab, {
                     tabType: TabType.Other,
                     uuid: tab.uuid,
                   })
-                    ? ''
+                    ? 'bg-white -mb-px'
                     : 'bg-gray-300'
                 }`}
+                style={
+                  isTabSelected(currentTab, {
+                    tabType: TabType.Other,
+                    uuid: tab.uuid,
+                  })
+                    ? { borderBottom: 'none' }
+                    : {}
+                }
                 key={index}
                 onClick={() =>
                   setCurrentTab({ tabType: TabType.Other, uuid: tab.uuid })
@@ -273,7 +296,7 @@ const Home: NextPage = () => {
             );
           })}
         </ul>
-        <div className='border-solid border border-black rounded p-3'>
+        <div className='border-solid border border-black rounded rounded-tl-none p-3'>
           {content}
         </div>
       </div>
