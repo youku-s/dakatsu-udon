@@ -2,6 +2,7 @@ import React from 'react';
 import { Sheet } from '../models';
 import Memories from './memories';
 import Regrets from './regrets';
+import Karmas from './karmas';
 import Personal from './personal';
 
 type ProfileTabProps = {
@@ -33,6 +34,14 @@ function ProfileTab(props: ProfileTabProps) {
         }}
       />
       <div className='bg-gray-400 p-1 rounded m-1'>カルマ</div>
+      <Karmas
+        karmas={props.sheet.profile.karmas}
+        setKarmas={(karmas) => {
+          const newSheet = { ...props.sheet };
+          newSheet.profile.karmas = karmas;
+          props.updateSheet(newSheet);
+        }}
+      />
       <div className='bg-gray-400 p-1 rounded m-1'>メモ</div>
     </div>
   );
