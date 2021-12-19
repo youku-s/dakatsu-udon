@@ -1,11 +1,10 @@
 import { NextPage } from 'next';
-import { Sheet, Profile, Place, ItemTab } from '../models';
+import { Sheet, Place, ItemTab } from '../models';
 import ProfileTab from './profile';
 import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
-import { CloseOutline } from 'react-ionicons';
 
 enum TabType {
   Profile,
