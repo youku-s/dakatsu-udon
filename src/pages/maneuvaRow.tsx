@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Maneuva, ManeuvaType, Region, Timing } from '../models';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -7,12 +7,15 @@ import {
   LockClosedOutline,
   PencilOutline,
 } from 'react-ionicons';
+import { DropTargetMonitor, useDrag, useDrop, XYCoord } from 'react-dnd';
+import { DnDItems } from '../dnd/dndItems';
 
 type ManeuvaRowProps = {
   maneuva: Maneuva;
   setManeuva: (maneuva: Maneuva) => void;
   removeManeuva: (uuid: string) => void;
   addManeuva: (maneuva: Maneuva) => void;
+  moveManeuva: (drag: string, hovered: string) => void;
 };
 
 function regionToString(region: Region) {
@@ -93,11 +96,59 @@ enum RowMode {
   Edit,
 }
 
+export type DropResult = {
+  rowNumber: number;
+};
+
 function ManeuvaRow(props: ManeuvaRowProps) {
+  const ref = useRef<HTMLTableRowElement>(null);
+  const [{ handlerId }, drop] = useDrop({
+    accept: DnDItems.Maneuva,
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
+    hover(item: Maneuva, monitor: DropTargetMonitor) {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.position;
+      const hoverIndex = props.maneuva.position;
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      props.moveManeuva(item.uuid, props.maneuva.uuid);
+      item.position = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag({
+    type: DnDItems.Maneuva,
+    item: () => {
+      return props.maneuva;
+    },
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
   const [mode, setMode] = useState<RowMode>(RowMode.View);
+  const opacity = isDragging ? 0 : 1;
+  drag(drop(ref));
   if (mode === RowMode.View) {
     return (
-      <tr key={props.maneuva.uuid}>
+      <tr ref={ref} style={{ opacity }} key={props.maneuva.uuid}>
         <td className='border border-gray-300 p-1 truncate'>
           {props.maneuva.position + 1}
         </td>
@@ -211,7 +262,12 @@ function ManeuvaRow(props: ManeuvaRowProps) {
     );
   }
   return (
-    <tr className='bg-yellow-300' key={props.maneuva.uuid}>
+    <tr
+      ref={ref}
+      style={{ opacity }}
+      className='bg-yellow-300'
+      key={props.maneuva.uuid}
+    >
       <td className='border border-gray-300 p-1'>
         {props.maneuva.position + 1}
       </td>

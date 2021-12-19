@@ -84,6 +84,22 @@ function Tab(props: TabProps) {
               });
             props.setItemTab(newTab);
           }}
+          moveManeuva={(drag, hovered) => {
+            const newTab = { ...props.tab };
+            const removed = items.filter((x) => x.uuid !== drag);
+            const dragItem = items.find((x) => x.uuid === drag) as Maneuva;
+            const hoveredIndex = removed.findIndex((x) => x.uuid === hovered);
+            const newItems = removed
+              .slice(0, hoveredIndex)
+              .concat([dragItem])
+              .concat(removed.slice(hoveredIndex))
+              .map((item, index) => {
+                item.position = index;
+                return item;
+              });
+            newTab.items = newItems;
+            props.setItemTab(newTab);
+          }}
         ></ManeuvaRow>
       );
     });
