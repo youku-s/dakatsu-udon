@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { Sheet, Profile, Place } from '../models';
+import { Sheet, Profile, Place, ItemTab } from '../models';
 import ProfileTab from './profile';
 import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
@@ -224,9 +224,30 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (currentTab.tabType == TabType.Profile) {
       setContent(<ProfileTab sheet={sheet} updateSheet={updateSheet} />);
-    } else {
-      setContent(<Tab sheet={sheet} />);
+      return;
     }
+
+    const tab = sheet.tabs.find((x) => x.uuid === currentTab.uuid);
+    if (tab === undefined) {
+      setContent(<ProfileTab sheet={sheet} updateSheet={updateSheet} />);
+      return;
+    }
+    setContent(
+      <Tab
+        tab={tab as ItemTab}
+        setItemTab={(tab) => {
+          const newSheet = { ...sheet };
+          const newTabs = sheet.tabs.map((item) => {
+            if (item.uuid === tab.uuid) {
+              return tab;
+            }
+            return item;
+          });
+          newSheet.tabs = newTabs;
+          updateSheet(newSheet);
+        }}
+      />,
+    );
   }, [currentTab, sheet]);
   return (
     <div className='flex items-start m-10'>
