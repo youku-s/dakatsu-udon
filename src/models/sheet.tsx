@@ -141,6 +141,7 @@ enum ManeuvaType {
   Effect = 'Effect',
   Archive = 'Archive',
   Tag = 'Tag',
+  Aerial = 'Aerial',
 }
 
 interface Maneuva {
