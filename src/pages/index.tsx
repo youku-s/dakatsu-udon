@@ -5,6 +5,7 @@ import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
+import { CloseOutline } from 'react-ionicons';
 
 enum TabType {
   Profile,
@@ -27,6 +28,7 @@ const Home: NextPage = () => {
   const [currentTab, setCurrentTab] = useState<CurrentTab>({
     tabType: TabType.Profile,
   });
+  const [tag, setTag] = useState('');
   const [sheet, setSheet] = useState({
     uuid: uuidv4(),
     isPrivate: false,
@@ -75,11 +77,8 @@ const Home: NextPage = () => {
       points: [],
     },
   } as Sheet);
-  const updateSheet = (sheet: Sheet) => {
-    setSheet(sheet);
-  };
   const [content, setContent] = useState(
-    <ProfileTab sheet={sheet} updateSheet={updateSheet} />,
+    <ProfileTab sheet={sheet} updateSheet={setSheet} />,
   );
   useEffect(() => {
     if (process.env.IS_LOCAL) {
@@ -223,13 +222,13 @@ const Home: NextPage = () => {
   }, []);
   useEffect(() => {
     if (currentTab.tabType == TabType.Profile) {
-      setContent(<ProfileTab sheet={sheet} updateSheet={updateSheet} />);
+      setContent(<ProfileTab sheet={sheet} updateSheet={setSheet} />);
       return;
     }
 
     const tab = sheet.tabs.find((x) => x.uuid === currentTab.uuid);
     if (tab === undefined) {
-      setContent(<ProfileTab sheet={sheet} updateSheet={updateSheet} />);
+      setContent(<ProfileTab sheet={sheet} updateSheet={setSheet} />);
       return;
     }
     setContent(
@@ -244,34 +243,71 @@ const Home: NextPage = () => {
             return item;
           });
           newSheet.tabs = newTabs;
-          updateSheet(newSheet);
+          setSheet(newSheet);
         }}
       />,
     );
   }, [currentTab, sheet]);
   return (
-    <div className='flex items-start m-10'>
-      <div className='flex-none text-xs w-64 inline-block border-solid border border-black rounded p-3 m-1'>
-        <div className='bg-gray-400 p-1 rounded m-1'>パスワード</div>
-        <div className='m-1'>
-          <input
-            type='password'
-            className='shadow appearance-none border border-black rounded w-full py-2 px-3'
-          ></input>
-        </div>
-        <div className='m-1'>
-          <button className='shadow bg-gray-300 rounded p-1'>保存</button>
-        </div>
-        <div className='bg-gray-400 p-1 rounded m-1'>タグ</div>
-        <div className='m-1'>タグは以下に入力し、Enterで追加できます。</div>
-        <div className='m-1'>
-          <input
-            type='text'
-            className='shadow border border-black rounded w-full py-2 px-3'
-          ></input>
-        </div>
+    <div className='m-5'>
+      <div className='w-full text-xs border-solid border border-black rounded p-3 m-1'>
+        <table className='table-fixed border-separate'>
+          <tbody>
+            <tr>
+              <td className='bg-gray-400 p-1 m-1 w-24'>パスワード</td>
+              <td className='m-1 p-1 w-36'>
+                <input
+                  type='password'
+                  className='shadow appearance-none border border-black rounded w-full p-1'
+                ></input>
+              </td>
+              <td className='m-1 p-1'>
+                <button className='shadow bg-gray-300 rounded p-1'>保存</button>
+              </td>
+            </tr>
+            <tr>
+              <td className='bg-gray-400 p-1 m-1'>タグ</td>
+              <td className='m-1 p-1'>
+                <input
+                  type='text'
+                  className='shadow border border-black rounded w-full p-1'
+                  value={tag}
+                  placeholder='Enterで追加できます'
+                  onInput={(e) => {
+                    setTag(e.currentTarget.value);
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      const newSheet = { ...sheet };
+                      newSheet.tags = [...sheet.tags, tag];
+                      setSheet(newSheet);
+                      setTag('');
+                    }
+                  }}
+                ></input>
+              </td>
+              <td className='p-1'>
+                {sheet.tags.map((x) => {
+                  return (
+                    <span
+                      className='m-1 p-1 rounded bg-green-200'
+                      key={uuidv4()}
+                      onDoubleClick={() => {
+                        const newSheet = { ...sheet };
+                        newSheet.tags = newSheet.tags.filter((t) => t !== x);
+                        setSheet(newSheet);
+                      }}
+                    >
+                      {x}
+                    </span>
+                  );
+                })}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div className='flex-auto inline-block m-1'>
+      <div className='inline-block m-1 w-full'>
         <ul className='align-top m-0'>
           <li
             className={`inline-block rounded border border-black rounded-b-none p-1 ${

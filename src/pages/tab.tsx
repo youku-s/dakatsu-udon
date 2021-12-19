@@ -75,7 +75,7 @@ function Tab(props: TabProps) {
               <th className='bg-gray-300 p-1 w-12'>コスト</th>
               <th className='bg-gray-300 p-1 w-12'>射程</th>
               <th className='bg-gray-300 p-1 w-24'>効果</th>
-              <th className='bg-gray-300 p-1 w-16'>寵愛</th>
+              <th className='bg-gray-300 p-1 w-10'>寵愛</th>
               <th className='bg-gray-300 p-1 w-6'></th>
               <th className='bg-gray-300 p-1 w-6'></th>
               <th className='bg-gray-300 p-1 w-6'></th>
