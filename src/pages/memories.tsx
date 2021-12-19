@@ -1,6 +1,7 @@
 import React from 'react';
 import { Memory } from '../models';
 import { v4 as uuidv4 } from 'uuid';
+import { AddOutline, CloseOutline } from 'react-ionicons';
 
 type MemoriesProps = {
   memories: Memory[];
@@ -51,7 +52,7 @@ function Memories(props: MemoriesProps) {
             }}
           ></input>
         </div>
-        <div className='table-cell w-1/6'>
+        <div className='table-cell w-1/6 align-middle'>
           <button
             className='mx-2'
             onClick={() => {
@@ -61,7 +62,7 @@ function Memories(props: MemoriesProps) {
               props.setMemories(newMemories);
             }}
           >
-            ✕
+            <CloseOutline height='1rem' width='1rem'></CloseOutline>
           </button>
         </div>
       </div>
@@ -81,7 +82,7 @@ function Memories(props: MemoriesProps) {
             props.setMemories(newMemories);
           }}
         >
-          ＋
+          <AddOutline height='1rem' width='1rem'></AddOutline>
         </button>
       </div>
     </div>

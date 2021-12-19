@@ -21,21 +21,23 @@ function Tab(props: TabProps) {
     if (props.tab.tabType === ItemTabType.ManeuvaTab) {
       const header = (
         <div className='table-row' key={uuidv4()}>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>No.</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>損傷</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>使用</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>悪意</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>行動値</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>カテゴリ</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>部位</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>種別</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>名前</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>タイミング</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>コスト</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>射程</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>効果</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>取得先</div>
-          <div className='bg-gray-300 p-1 m-1 table-cell'>寵愛</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-2'>No.</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-10'>損傷</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-10'>使用</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-10'>悪意</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-16'>行動値</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-20'>カテゴリ</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-16'>部位</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-32'>種別</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-32'>名前</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-32'>タイミング</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-12'>コスト</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-12'>射程</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-32'>効果</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-16'>取得先</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-16'>寵愛</div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-2'></div>
+          <div className='bg-gray-300 p-1 m-1 table-cell w-2'></div>
         </div>
       );
       const items = props.tab.items as Array<Maneuva>;
@@ -158,7 +160,28 @@ function Tab(props: TabProps) {
   }
   return (
     <div>
-      <button className='border border-black p-1 rounded'></button>
+      <button
+        className='text-xs border border-black p-1 m-1 rounded'
+        onClick={() => {
+          setPageMode(
+            pageMode === ItemTabMode.Normal
+              ? ItemTabMode.Text
+              : ItemTabMode.Normal,
+          );
+        }}
+      >
+        {pageMode === ItemTabMode.Normal ? 'テキスト表示' : 'リスト表示'}
+      </button>
+      {props.tab.tabType === ItemTabType.ManeuvaTab ? (
+        <button
+          className='text-xs border border-black p-1 m-1 rounded'
+          onClick={() => {}}
+        >
+          マニューバインポート
+        </button>
+      ) : (
+        <span></span>
+      )}
       <div className='w-full text-xs'>{content}</div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Regret } from '../models';
 import { v4 as uuidv4 } from 'uuid';
+import { AddOutline, CloseOutline } from 'react-ionicons';
 
 type RegretsProps = {
   regrets: Regret[];
@@ -123,7 +124,7 @@ function Regrets(props: RegretsProps) {
             }}
           ></input>
         </div>
-        <div className='table-cell w-10'>
+        <div className='table-cell w-10 align-middle'>
           <button
             className='mx-2'
             onClick={() => {
@@ -133,7 +134,7 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           >
-            ✕
+            <CloseOutline height='1rem' width='1rem'></CloseOutline>
           </button>
         </div>
       </div>
@@ -161,7 +162,7 @@ function Regrets(props: RegretsProps) {
             props.setRegrets(newRegrets);
           }}
         >
-          ＋
+          <AddOutline height='1rem' width='1rem'></AddOutline>
         </button>
       </div>
     </div>

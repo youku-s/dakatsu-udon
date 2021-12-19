@@ -1,6 +1,7 @@
 import React from 'react';
 import { Maneuva, Regret, Resource } from '../models';
 import { v4 as uuidv4 } from 'uuid';
+import { AddOutline, CloseOutline } from 'react-ionicons';
 
 type ResourceRowProps = {
   resource: Resource;
@@ -31,7 +32,7 @@ function ResourceRow(props: ResourceRowProps) {
             props.removeResource(props.resource.uuid);
           }}
         >
-          ✕
+          <CloseOutline height='1rem' width='1rem'></CloseOutline>
         </button>
       </div>
     </div>

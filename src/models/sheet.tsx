@@ -205,4 +205,4 @@ export type {
   Maneuva,
   Resource,
 };
-export { Place, ItemTabType };
+export { Place, ItemTabType, ManeuvaType, Region, Timing };
