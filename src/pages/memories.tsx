@@ -9,16 +9,10 @@ type MemoriesProps = {
 };
 
 function Memories(props: MemoriesProps) {
-  const header = (
-    <div className='table-row' key={uuidv4()}>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>名前</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>詳細</div>
-    </div>
-  );
   const rows = props.memories.map((x, i) => {
     return (
-      <div className='table-row' key={x.uuid}>
-        <div className='table-cell w-1/6'>
+      <tr key={x.uuid}>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -34,8 +28,8 @@ function Memories(props: MemoriesProps) {
               props.setMemories(newMemories);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-4/6'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -51,8 +45,8 @@ function Memories(props: MemoriesProps) {
               props.setMemories(newMemories);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-1/6 align-middle'>
+        </td>
+        <td className='align-middle'>
           <button
             className='mx-2'
             onClick={() => {
@@ -64,27 +58,33 @@ function Memories(props: MemoriesProps) {
           >
             <CloseOutline height='1rem' width='1rem'></CloseOutline>
           </button>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   });
-  const content = [header].concat(rows);
   return (
     <div>
-      <div className='table w-full text-xs'>
-        <div className='table-row-group'>{content}</div>
-        <button
-          onClick={() => {
-            const newMemories = [
-              ...props.memories,
-              { uuid: uuidv4(), name: '', description: '' },
-            ];
-            props.setMemories(newMemories);
-          }}
-        >
-          <AddOutline height='1rem' width='1rem'></AddOutline>
-        </button>
-      </div>
+      <table className='table-fixed text-xs border-separate'>
+        <thead>
+          <tr>
+            <th className='bg-gray-300 p-1 w-40'>名前</th>
+            <th className='bg-gray-300 p-1 w-40'>詳細</th>
+            <th className='bg-gray-300 p-1 w-5'></th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+      <button
+        onClick={() => {
+          const newMemories = [
+            ...props.memories,
+            { uuid: uuidv4(), name: '', description: '' },
+          ];
+          props.setMemories(newMemories);
+        }}
+      >
+        <AddOutline height='1rem' width='1rem'></AddOutline>
+      </button>
     </div>
   );
 }

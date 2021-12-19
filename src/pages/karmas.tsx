@@ -9,17 +9,10 @@ type KarmasProps = {
 };
 
 function Karmas(props: KarmasProps) {
-  const header = (
-    <div className='table-row' key={uuidv4()}>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>達成</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>条件</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>詳細</div>
-    </div>
-  );
   const rows = props.karmas.map((x, i) => {
     return (
-      <div className='table-row' key={x.uuid}>
-        <div className='table-cell w-10'>
+      <tr key={x.uuid}>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='checkbox'
@@ -35,8 +28,8 @@ function Karmas(props: KarmasProps) {
               props.setKarmas(newKarmas);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-40'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -52,8 +45,8 @@ function Karmas(props: KarmasProps) {
               props.setKarmas(newKarmas);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-80'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -69,8 +62,8 @@ function Karmas(props: KarmasProps) {
               props.setKarmas(newKarmas);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-10 align-middle'>
+        </td>
+        <td className='align-middle'>
           <button
             className='mx-2'
             onClick={() => {
@@ -82,32 +75,39 @@ function Karmas(props: KarmasProps) {
           >
             <CloseOutline height='1rem' width='1rem'></CloseOutline>
           </button>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   });
-  const content = [header].concat(rows);
   return (
     <div>
-      <div className='table w-full text-xs'>
-        <div className='table-row-group'>{content}</div>
-        <button
-          onClick={() => {
-            const newKarmas = [
-              ...props.karmas,
-              {
-                uuid: uuidv4(),
-                achieved: false,
-                name: '',
-                description: '',
-              },
-            ];
-            props.setKarmas(newKarmas);
-          }}
-        >
-          <AddOutline height='1rem' width='1rem'></AddOutline>
-        </button>
-      </div>
+      <table className='table-fixed text-xs border-separate'>
+        <thead>
+          <tr>
+            <th className='bg-gray-300 p-1 w-10'>達成</th>
+            <th className='bg-gray-300 p-1 w-40'>条件</th>
+            <th className='bg-gray-300 p-1 w-40'>詳細</th>
+            <th className='bg-gray-300 p-1 w-5'></th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+      <button
+        onClick={() => {
+          const newKarmas = [
+            ...props.karmas,
+            {
+              uuid: uuidv4(),
+              achieved: false,
+              name: '',
+              description: '',
+            },
+          ];
+          props.setKarmas(newKarmas);
+        }}
+      >
+        <AddOutline height='1rem' width='1rem'></AddOutline>
+      </button>
     </div>
   );
 }

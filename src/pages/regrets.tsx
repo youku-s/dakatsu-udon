@@ -9,20 +9,10 @@ type RegretsProps = {
 };
 
 function Regrets(props: RegretsProps) {
-  const header = (
-    <div className='table-row' key={uuidv4()}>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>対象</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>種類</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>現在値</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>最大値</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>発狂効果</div>
-      <div className='bg-gray-300 p-1 m-1 table-cell'>備考</div>
-    </div>
-  );
   const rows = props.regrets.map((x, i) => {
     return (
-      <div className='table-row' key={x.uuid}>
-        <div className='table-cell w-40'>
+      <tr key={x.uuid}>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -38,8 +28,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-40'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -55,8 +45,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-20'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='number'
@@ -72,8 +62,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-20'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='number'
@@ -89,8 +79,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-40'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -106,8 +96,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-80'>
+        </td>
+        <td>
           <input
             className='border border-black p-1 w-full'
             type='text'
@@ -123,8 +113,8 @@ function Regrets(props: RegretsProps) {
               props.setRegrets(newRegrets);
             }}
           ></input>
-        </div>
-        <div className='table-cell w-10 align-middle'>
+        </td>
+        <td className='talign-middle'>
           <button
             className='mx-2'
             onClick={() => {
@@ -136,35 +126,45 @@ function Regrets(props: RegretsProps) {
           >
             <CloseOutline height='1rem' width='1rem'></CloseOutline>
           </button>
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   });
-  const content = [header].concat(rows);
   return (
     <div>
-      <div className='table w-full text-xs'>
-        <div className='table-row-group'>{content}</div>
-        <button
-          onClick={() => {
-            const newRegrets = [
-              ...props.regrets,
-              {
-                uuid: uuidv4(),
-                target: '',
-                name: '',
-                currentVal: 3,
-                maxVal: 4,
-                negative: '',
-                description: '',
-              },
-            ];
-            props.setRegrets(newRegrets);
-          }}
-        >
-          <AddOutline height='1rem' width='1rem'></AddOutline>
-        </button>
-      </div>
+      <table className='table-fixed text-xs border-separate'>
+        <thead>
+          <tr>
+            <th className='bg-gray-300 p-1 w-32'>対象</th>
+            <th className='bg-gray-300 p-1 w-32'>種類</th>
+            <th className='bg-gray-300 p-1 w-16'>現在値</th>
+            <th className='bg-gray-300 p-1 w-16'>最大値</th>
+            <th className='bg-gray-300 p-1 w-32'>発狂効果</th>
+            <th className='bg-gray-300 p-1 w-60'>備考</th>
+            <th className='bg-gray-300 p-1 w-5'></th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+      <button
+        onClick={() => {
+          const newRegrets = [
+            ...props.regrets,
+            {
+              uuid: uuidv4(),
+              target: '',
+              name: '',
+              currentVal: 3,
+              maxVal: 4,
+              negative: '',
+              description: '',
+            },
+          ];
+          props.setRegrets(newRegrets);
+        }}
+      >
+        <AddOutline height='1rem' width='1rem'></AddOutline>
+      </button>
     </div>
   );
 }
