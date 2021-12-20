@@ -13,13 +13,18 @@ import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
-import { AddOutline } from 'react-ionicons';
+import { AddOutline, CloseOutline, PencilOutline } from 'react-ionicons';
 
 enum TabType {
   Profile,
   Classes,
   Favors,
   Other,
+}
+
+enum TabTitleMode {
+  View,
+  Edit,
 }
 
 interface CurrentTab {
@@ -38,6 +43,7 @@ const Home: NextPage = () => {
   });
   const [tag, setTag] = useState('');
   const [tabTypeSelect, setTabTypeSelect] = useState(ItemTabType.ManeuvaTab);
+  const [tabTitleMode, setTabTitleMode] = useState(TabTitleMode.View);
   const [sheet, setSheet] = useState({
     uuid: uuidv4(),
     isPrivate: false,
@@ -357,7 +363,55 @@ const Home: NextPage = () => {
                   setCurrentTab({ tabType: TabType.Other, uuid: tab.uuid })
                 }
               >
-                {tab.title}
+                {tabTitleMode === TabTitleMode.View ? (
+                  <span>{tab.title}</span>
+                ) : (
+                  <input
+                    type='text'
+                    defaultValue={tab.title}
+                    size={Math.max(tab.title.length, 5)}
+                    onInput={(e) => {
+                      const newSheet = { ...sheet };
+                      newSheet.tabs = newSheet.tabs.map((x) => {
+                        if (x.uuid === tab.uuid) {
+                          tab.title = e.currentTarget.value;
+                          return tab;
+                        }
+                        return x;
+                      });
+                      setSheet(newSheet);
+                    }}
+                  ></input>
+                )}
+                {tabTitleMode === TabTitleMode.View ? (
+                  <></>
+                ) : (
+                  <button
+                    className='mx-2'
+                    onClick={() => {
+                      const newSheet = { ...sheet };
+                      newSheet.tabs = newSheet.tabs.filter(
+                        (t) => t.uuid !== tab.uuid,
+                      );
+                      setSheet(newSheet);
+                      setTabTitleMode(TabTitleMode.View);
+                    }}
+                  >
+                    <CloseOutline height='1rem' width='1rem'></CloseOutline>
+                  </button>
+                )}
+                <button
+                  className='mx-2'
+                  onClick={() => {
+                    setTabTitleMode(
+                      tabTitleMode === TabTitleMode.View
+                        ? TabTitleMode.Edit
+                        : TabTitleMode.View,
+                    );
+                  }}
+                >
+                  <PencilOutline height='1rem' width='1rem'></PencilOutline>
+                </button>
               </li>
             );
           })}
