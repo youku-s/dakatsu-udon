@@ -195,13 +195,13 @@ function Tab(props: TabProps) {
     });
     content = (
       <div>
-        <table className='table-fixed text-xs border-separate w-full'>
+        <table className='table-fixed text-xs border-separate'>
           <thead>
             <tr>
-              <th className='bg-gray-300 p-1'>No.</th>
-              <th className='bg-gray-300 p-1'>名前</th>
-              <th className='bg-gray-300 p-1'>説明</th>
-              <th className='bg-gray-300 p-1'>寵愛</th>
+              <th className='bg-gray-300 p-1 w-6'>No.</th>
+              <th className='bg-gray-300 p-1 w-24'>名前</th>
+              <th className='bg-gray-300 p-1 w-24'>説明</th>
+              <th className='bg-gray-300 p-1 w-10'>寵愛</th>
               <th className='bg-gray-300 p-1 w-6'></th>
               <th className='bg-gray-300 p-1 w-6'></th>
               <th className='bg-gray-300 p-1 w-6'></th>
@@ -334,9 +334,6 @@ function importManeuva(content: string) {
     const normalEscaped = normalEscape(row);
     const hokanojyoEscaped = hokanojyoEscape(row);
     const partsEscaped = partsEscape(row);
-    console.log(normalEscaped);
-    console.log(hokanojyoEscaped);
-    console.log(partsEscaped);
     if (effectRegex.test(normalEscaped)) {
       const matchResult = normalEscaped.match(effectRegex) || [];
       const [_all, malice, name, cost, range, description] = matchResult;

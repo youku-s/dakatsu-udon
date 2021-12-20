@@ -1,10 +1,19 @@
 import { NextPage } from 'next';
-import { Sheet, Place, ItemTab } from '../models';
+import {
+  Sheet,
+  Place,
+  ItemTab,
+  ItemTabType,
+  ManeuvaType,
+  Timing,
+  Region,
+} from '../models';
 import ProfileTab from './profile';
 import Tab from './tab';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
+import { AddOutline } from 'react-ionicons';
 
 enum TabType {
   Profile,
@@ -28,6 +37,7 @@ const Home: NextPage = () => {
     tabType: TabType.Profile,
   });
   const [tag, setTag] = useState('');
+  const [tabTypeSelect, setTabTypeSelect] = useState(ItemTabType.ManeuvaTab);
   const [sheet, setSheet] = useState({
     uuid: uuidv4(),
     isPrivate: false,
@@ -351,6 +361,62 @@ const Home: NextPage = () => {
               </li>
             );
           })}
+          <li className='inline-block rounded border border-black rounded-b-none p-1 bg-gray-300'>
+            <select
+              onChange={(e) => {
+                setTabTypeSelect(e.currentTarget.value as ItemTabType);
+              }}
+            >
+              <option value={ItemTabType.ManeuvaTab}>マニューバ</option>
+              <option value={ItemTabType.ResourceTab}>リソース</option>
+            </select>
+            <button
+              onClick={() => {
+                const newSheet = { ...sheet };
+                newSheet.tabs = [
+                  ...sheet.tabs,
+                  {
+                    uuid: uuidv4(),
+                    tabType: tabTypeSelect,
+                    title:
+                      tabTypeSelect === ItemTabType.ManeuvaTab
+                        ? 'マニューバ'
+                        : 'リソース',
+                    items:
+                      tabTypeSelect === ItemTabType.ManeuvaTab
+                        ? [
+                            {
+                              uuid: uuidv4(),
+                              used: false,
+                              lost: false,
+                              maneuvaType: ManeuvaType.Skill,
+                              category: '0',
+                              name: '',
+                              timing: Timing.AutoAlways,
+                              cost: '',
+                              range: '',
+                              description: '',
+                              from: '',
+                              region: Region.NoRegion,
+                              position: 0,
+                            },
+                          ]
+                        : [
+                            {
+                              uuid: uuidv4(),
+                              name: '',
+                              description: '',
+                              position: 0,
+                            },
+                          ],
+                  },
+                ];
+                setSheet(newSheet);
+              }}
+            >
+              <AddOutline height='1rem' width='1rem'></AddOutline>
+            </button>
+          </li>
         </ul>
         <div className='border-solid border border-black rounded rounded-tl-none p-3'>
           {content}

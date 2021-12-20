@@ -26,7 +26,7 @@ enum RowMode {
 function ResourceRow(props: ResourceRowProps) {
   const ref = useRef<HTMLTableRowElement>(null);
   const [{ handlerId }, drop] = useDrop({
-    accept: DnDItems.Maneuva,
+    accept: DnDItems.Resource,
     collect(monitor) {
       return {
         handlerId: monitor.getHandlerId(),
@@ -60,7 +60,7 @@ function ResourceRow(props: ResourceRowProps) {
   const [{ isDragging }, drag] = useDrag({
     type: DnDItems.Resource,
     item: () => {
-      return props.removeResource;
+      return props.resource;
     },
     collect: (monitor: any) => ({
       isDragging: monitor.isDragging(),
@@ -84,15 +84,21 @@ function ResourceRow(props: ResourceRowProps) {
         <td className='border border-gray-300 p-1 truncate'>
           {props.resource.favor}
         </td>
-        <td>
-          <button
-            className='mx-2'
-            onClick={() => {
-              props.removeResource(props.resource.uuid);
-            }}
-          >
-            <CloseOutline height='1rem' width='1rem'></CloseOutline>
-          </button>
+        <td className='align-middle text-center'>
+          {props.resource.position !== 0 ? (
+            <button
+              className='mx-2'
+              onClick={() => {
+                props.removeResource(props.resource.uuid);
+              }}
+            >
+              <CloseOutline height='1rem' width='1rem'></CloseOutline>
+            </button>
+          ) : (
+            <button className='mx-2'>
+              <LockClosedOutline height='1rem' width='1rem'></LockClosedOutline>
+            </button>
+          )}
         </td>
         <td className='align-middle'>
           <button
