@@ -324,6 +324,7 @@ const partRegex = new RegExp(
 const selfRegex = new RegExp(
   '^(.+)<BAR>(.+)<BAR>(.+)<BAR>(.+)<BAR>(.+)<BAR>(.+)<BAR>(.+)<BAR>(.+)<BAR>(.*)$',
 );
+const tagRegex = new RegExp('^<MLPAREN>(.+)<MRPAREN>タグ<COLON>(.+)$');
 
 function importManeuva(content: string) {
   const contents = content.split('\n').filter((x) => x !== '');
@@ -333,6 +334,9 @@ function importManeuva(content: string) {
     const normalEscaped = normalEscape(row);
     const hokanojyoEscaped = hokanojyoEscape(row);
     const partsEscaped = partsEscape(row);
+    console.log(normalEscaped);
+    console.log(hokanojyoEscaped);
+    console.log(partsEscaped);
     if (effectRegex.test(normalEscaped)) {
       const matchResult = normalEscaped.match(effectRegex) || [];
       const [_all, malice, name, cost, range, description] = matchResult;
@@ -341,7 +345,7 @@ function importManeuva(content: string) {
         used: false,
         lost: false,
         maneuvaType: ManeuvaType.Effect,
-        malice: +malice,
+        malice: isNaN(+malice) ? undefined : +malice,
         category: '0',
         name: unescape(name),
         timing: Timing.AutoAlways,
@@ -362,7 +366,7 @@ function importManeuva(content: string) {
         used: false,
         lost: false,
         maneuvaType: timingToManeuvaType(timing),
-        malice: +malice,
+        malice: isNaN(+malice) ? undefined : +malice,
         category: '0',
         name: unescape(name),
         timing: stringToTiming(timing),
@@ -401,7 +405,7 @@ function importManeuva(content: string) {
         uuid: uuidv4(),
         used: false,
         lost: false,
-        maneuvaType: ManeuvaType.Skill,
+        maneuvaType: timingToManeuvaType(timing),
         category: '0',
         name: unescape(name),
         timing: stringToTiming(timing),
@@ -451,7 +455,7 @@ function importManeuva(content: string) {
         uuid: uuidv4(),
         used: false,
         lost: false,
-        malice: +malice,
+        malice: isNaN(+malice) ? undefined : +malice,
         maneuvaType: stringToManeuvaType(maneuvaType),
         category: '0',
         name: unescape(name),
@@ -461,6 +465,25 @@ function importManeuva(content: string) {
         description: unescape(description),
         from: '',
         region: stringToRegion(region),
+        position: index,
+      });
+      return;
+    } else if (tagRegex.test(normalEscaped)) {
+      const matchResult = normalEscaped.match(tagRegex) || [];
+      const [_all, name, description] = matchResult;
+      imported.push({
+        uuid: uuidv4(),
+        used: false,
+        lost: false,
+        maneuvaType: ManeuvaType.Tag,
+        category: '0',
+        name: unescape(name),
+        timing: Timing.AutoAlways,
+        cost: '',
+        range: '',
+        description: unescape(description),
+        from: '',
+        region: Region.NoRegion,
         position: index,
       });
       return;
@@ -522,8 +545,10 @@ function timingToManeuvaType(timing: string) {
   switch (timing.trim()) {
     case 'アーカイブ':
       return ManeuvaType.Archive;
+    case 'エフェクト':
+      return ManeuvaType.Effect;
     default:
-      return ManeuvaType.Part;
+      return ManeuvaType.Skill;
   }
 }
 function stringToRegion(str: string) {
@@ -599,12 +624,18 @@ function partsEscape(text: string) {
     .replaceAll(']', '<MRPAREN>')
     .replaceAll('【', '<LLPAREN>')
     .replaceAll('】', '<LRPAREN>');
-  const mrParenIndex = normalizedBeforeColon.indexOf('<MRPAREN>');
+  const lrParenIndex =
+    normalizedBeforeColon.indexOf('<LRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<LRPAREN>');
+  const mrParenIndex =
+    normalizedBeforeColon.indexOf('<MRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<MRPAREN>');
+  const index = Math.min(mrParenIndex, lrParenIndex);
   const colonEscaped =
-    normalizedBeforeColon
-      .slice(0, mrParenIndex)
-      .replaceAll(':', '<ESCAPED_COLON>') +
-    normalizedBeforeColon.slice(mrParenIndex);
+    normalizedBeforeColon.slice(0, index).replaceAll(':', '<ESCAPED_COLON>') +
+    normalizedBeforeColon.slice(index);
   return colonEscaped
     .replaceAll(':', '<COLON>')
     .replaceAll('|', '<BAR>')
@@ -617,14 +648,18 @@ function hokanojyoEscape(text: string) {
   const normalizedBeforeColon = normalized
     .replaceAll('[', '<MLPAREN>')
     .replaceAll(']', '<MRPAREN>');
-  const mrParenIndex = normalizedBeforeColon.indexOf('<MRPAREN>');
-  const splitAtIndex =
-    mrParenIndex == -1 ? normalizedBeforeColon.length : mrParenIndex;
+  const lrParenIndex =
+    normalizedBeforeColon.indexOf('<LRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<LRPAREN>');
+  const mrParenIndex =
+    normalizedBeforeColon.indexOf('<MRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<MRPAREN>');
+  const index = Math.min(mrParenIndex, lrParenIndex);
   const colonEscaped =
-    normalizedBeforeColon
-      .slice(0, splitAtIndex)
-      .replaceAll(':', '<ESCAPED_COLON>') +
-    normalizedBeforeColon.slice(splitAtIndex);
+    normalizedBeforeColon.slice(0, index).replaceAll(':', '<ESCAPED_COLON>') +
+    normalizedBeforeColon.slice(index);
   return colonEscaped
     .replaceAll(':', '<COLON>')
     .replaceAll('|', '<BAR>')
@@ -641,12 +676,18 @@ function normalEscape(text: string) {
     .replaceAll(']', '<MRPAREN>')
     .replaceAll('【', '<LLPAREN>')
     .replaceAll('】', '<LRPAREN>');
-  const lrParenIndex = normalizedBeforeColon.indexOf('<LRPAREN>');
+  const lrParenIndex =
+    normalizedBeforeColon.indexOf('<LRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<LRPAREN>');
+  const mrParenIndex =
+    normalizedBeforeColon.indexOf('<MRPAREN>') === -1
+      ? normalizedBeforeColon.length
+      : normalizedBeforeColon.indexOf('<MRPAREN>');
+  const index = Math.min(mrParenIndex, lrParenIndex);
   const colonEscaped =
-    normalizedBeforeColon
-      .slice(0, lrParenIndex)
-      .replaceAll(':', '<ESCAPED_COLON>') +
-    normalizedBeforeColon.slice(lrParenIndex);
+    normalizedBeforeColon.slice(0, index).replaceAll(':', '<ESCAPED_COLON>') +
+    normalizedBeforeColon.slice(index);
   return colonEscaped
     .replaceAll(':', '<COLON>')
     .replaceAll('|', '<BAR>')
